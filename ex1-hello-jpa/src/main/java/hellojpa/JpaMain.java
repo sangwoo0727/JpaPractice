@@ -18,15 +18,19 @@ public class JpaMain {
         //모든 데이터를 변경하는 모든 작업은 꼭 트랜잭션 안에서 작업한다.
 
         tx.begin();
-        Member member = new Member();
+        try{
+            Member member = new Member();
 //        member.setId(1L);
 //        member.setName("HelloA");
-        member.setId(2L);
-        member.setName("HelloB");
-        em.persist(member);
-        tx.commit();
-
-        em.close();
+            member.setId(2L);
+            member.setName("HelloB");
+            em.persist(member);
+            tx.commit();
+        }catch(Exception e){
+            tx.rollback();
+        }finally{
+            em.close();
+        }
         emf.close(); //실제 애플리케이션이 끝나면 entityManagerFactory를 닫아줘야한다.
 
     }
