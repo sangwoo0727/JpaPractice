@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.List;
 
 public class JpaMain {
     public static void main(String[] args) {
@@ -19,15 +20,20 @@ public class JpaMain {
 
         tx.begin();
         try{
-            //entityManager를 자바 컬렉션처럼 이해하면된다. -> 내 객체를 대신 저장해주는 애
-            Member findMember = em.find(Member.class,1L); //pk가 1인 애를 조회
-            //em.remove(findMember); //삭제
-
-            //수정
-            findMember.setName("HelloJPA");
-            //자바 객체에서 값만 수정했는데도, Update 쿼리가 나간다.
-            // JPA를 통해서 entity를 가져오면 JPA가 관리한다. 트랜잭션 commit 시점에 확인하고, 바뀌어있으면 Update 쿼리가 나간다.
-
+            //JPQL 간단한 사용
+            //단순한 조회 방법.
+            //객체를 대상으로 하는 객체지향 쿼리라고 생각하면 된다.
+            //쿼리 날리는게 똑같은데 무슨 이점이 있냐?
+            //페이지네이션 같은 부분에서도 여기서 적고, rdb에 따라 dialect만 설정해주면 알아서 다르게 쿼리가 나간다.
+            //또한 Member는 테이블이 아닌 Entity 객체
+            //뒤에서 아주 자세히 다룰거다. 지금은 이정도로만 넘어가자.
+            List<Member> list = em.createQuery("select m from Member as m",Member.class)
+                    .setFirstResult(1) //첫번째부터
+                    .setMaxResults(10) //10개 가져와라,, 이 두문장이 페이지네이션 부분
+                    .getResultList();
+            for (Member member : list) {
+                System.out.println(member.getName());
+            }
 
             tx.commit();
         }catch(Exception e){
