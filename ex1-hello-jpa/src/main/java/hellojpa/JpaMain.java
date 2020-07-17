@@ -20,13 +20,14 @@ public class JpaMain {
 
         tx.begin();
         try{
-            Member member1 = new Member(150L, "A");
-            Member member2 = new Member(160L, "B");
-            em.persist(member1);
-            em.persist(member2);
-            //em.persist를 하는 순간에 데이터베이스에 저장되는 것이 아니라,
-            //영속성 컨텍스트에 쌓여있는다.
-            System.out.println("================");
+            Member member = em.find(Member.class , 150L);
+            member.setName("ZZZ");
+            //JPA 목적이 자바 컬렉션 다루듯이 다루는 것이 목적이기 때문에,
+            //컬렉션에선 값 꺼낸다음에 값 변경한 후 다시 값을 집어넣지 않는다.
+            //때문에, JPA 역시도 똑같이 작동하게 되어있다.
+            //비밀은 영속성 컨텍스트 안에 있다.
+            //커밋할때 엔티티와 스냅샷을 비교한다.
+            // 비교를 해서 바뀐게 있으면, Update 쿼리를 날린다.
             tx.commit(); //커밋하는 시점에 데이터베이스에 쿼리가 날아간다.
         }catch(Exception e){
             tx.rollback();
