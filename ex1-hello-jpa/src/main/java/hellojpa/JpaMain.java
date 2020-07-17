@@ -20,19 +20,14 @@ public class JpaMain {
 
         tx.begin();
         try{
-            Member findMember1 = em.find(Member.class, 101L);
-            Member findMember2 = em.find(Member.class, 101L);
-            //데이터 베이스에는 이미 101L을 pk로 가지고있는 데이터를 넣어둔 상태이다.
-            // 1차 캐시는 트랜잭션 단위이므로, 이 경우, 첫번째 find에서는 1차 캐시에 내용이 저장되어있지 않으므로,
-            // 데이터베이스에 접근하는 쿼리문(select)가 나가게 되고,
-            // 두번째 find에서는 1차 캐시에 저장된 상태이므로 쿼리문이 안날라간다.
-            // 즉, 1번만 쿼리문이 수행됨.
-            System.out.println(findMember1 == findMember2);
-            // 영속 엔티티의 동일성이 보장된다 . 결과값 true
-            // 마치 자바 컬렉션에서 꺼내서 하듯이
-            // 1차 캐시가 있기 때문에 가능하다.
-
-            tx.commit();
+            Member member1 = new Member(150L, "A");
+            Member member2 = new Member(160L, "B");
+            em.persist(member1);
+            em.persist(member2);
+            //em.persist를 하는 순간에 데이터베이스에 저장되는 것이 아니라,
+            //영속성 컨텍스트에 쌓여있는다.
+            System.out.println("================");
+            tx.commit(); //커밋하는 시점에 데이터베이스에 쿼리가 날아간다.
         }catch(Exception e){
             tx.rollback();
         }finally{
