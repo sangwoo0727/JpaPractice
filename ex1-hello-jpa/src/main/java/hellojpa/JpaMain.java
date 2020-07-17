@@ -20,10 +20,14 @@ public class JpaMain {
 
         tx.begin();
         try{
-            Member member = new Member(200L, "member200");
-            em.persist(member);
-            em.flush(); // 플러시 직접호출 // 커밋이 되기 전에 미리 sql이 보고싶거나 그럴 때.. 강제로 호출!
-            System.out.println("===========");
+            Member member = em.find(Member.class,150L);
+            member.setName("AAA");
+            //원래대로면, member는 영속성 컨텍스트에 올라간 상태이고, commit 시점에 더티 체킹을 통하여, 차이가 있으면, update 쿼리를 날린다.
+
+            em.detach(member);
+            //하지만 이렇게 준영속상태로 만들어버리면, 더 이상 영속성 컨텍스트에서 관리를 안하게 된다.
+            //그러면 commit 시점에 update 쿼리 나가지 않는다.
+
             tx.commit();
         }catch(Exception e){
             tx.rollback();
