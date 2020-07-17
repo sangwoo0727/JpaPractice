@@ -20,15 +20,11 @@ public class JpaMain {
 
         tx.begin();
         try{
-            Member member = em.find(Member.class , 150L);
-            member.setName("ZZZ");
-            //JPA 목적이 자바 컬렉션 다루듯이 다루는 것이 목적이기 때문에,
-            //컬렉션에선 값 꺼낸다음에 값 변경한 후 다시 값을 집어넣지 않는다.
-            //때문에, JPA 역시도 똑같이 작동하게 되어있다.
-            //비밀은 영속성 컨텍스트 안에 있다.
-            //커밋할때 엔티티와 스냅샷을 비교한다.
-            // 비교를 해서 바뀐게 있으면, Update 쿼리를 날린다.
-            tx.commit(); //커밋하는 시점에 데이터베이스에 쿼리가 날아간다.
+            Member member = new Member(200L, "member200");
+            em.persist(member);
+            em.flush(); // 플러시 직접호출 // 커밋이 되기 전에 미리 sql이 보고싶거나 그럴 때.. 강제로 호출!
+            System.out.println("===========");
+            tx.commit();
         }catch(Exception e){
             tx.rollback();
         }finally{
