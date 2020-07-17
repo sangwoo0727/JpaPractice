@@ -20,23 +20,13 @@ public class JpaMain {
 
         tx.begin();
         try{
-            //영속 상태란?
-            
-            //비영속상태
-            Member member = new Member();
-            member.setId(101L);
-            member.setName("HelloJPA");
-
-            System.out.println("==Before==");
-            em.persist(member); //영속성 컨텍스트에 저장
-            System.out.println("==After==");
-
-            Member findMember = em.find(Member.class, 101L); //출력문을 보면, select 쿼리가 안나간다.
-            System.out.println("findMember.id " + findMember.getId());
-            System.out.println("findMember.name" + findMember.getName());
-            // 조회를 했는데, select 쿼리가 안날라간 것은
-            // 영속성 컨텍스트에 저장을 하면서, 1차 캐시에 저장이 되므로.. 똑같은 pk로 값을 가져오면 1차캐시를 먼저 조회한 것.
-
+            Member findMember1 = em.find(Member.class, 101L);
+            Member findMember2 = em.find(Member.class, 101L);
+            //데이터 베이스에는 이미 101L을 pk로 가지고있는 데이터를 넣어둔 상태이다.
+            // 1차 캐시는 트랜잭션 단위이므로, 이 경우, 첫번째 find에서는 1차 캐시에 내용이 저장되어있지 않으므로,
+            // 데이터베이스에 접근하는 쿼리문(select)가 나가게 되고,
+            // 두번째 find에서는 1차 캐시에 저장된 상태이므로 쿼리문이 안날라간다.
+            // 즉, 1번만 쿼리문이 수행됨.
             tx.commit();
         }catch(Exception e){
             tx.rollback();
