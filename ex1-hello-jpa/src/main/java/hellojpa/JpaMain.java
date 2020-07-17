@@ -20,22 +20,24 @@ public class JpaMain {
 
         tx.begin();
         try{
-            //JPQL 간단한 사용
-            //단순한 조회 방법.
-            //객체를 대상으로 하는 객체지향 쿼리라고 생각하면 된다.
-            //쿼리 날리는게 똑같은데 무슨 이점이 있냐?
-            //페이지네이션 같은 부분에서도 여기서 적고, rdb에 따라 dialect만 설정해주면 알아서 다르게 쿼리가 나간다.
-            //또한 Member는 테이블이 아닌 Entity 객체
-            //뒤에서 아주 자세히 다룰거다. 지금은 이정도로만 넘어가자.
-            List<Member> list = em.createQuery("select m from Member as m",Member.class)
-                    .setFirstResult(1) //첫번째부터
-                    .setMaxResults(10) //10개 가져와라,, 이 두문장이 페이지네이션 부분
-                    .getResultList();
-            for (Member member : list) {
-                System.out.println(member.getName());
-            }
+            //영속 상태란?
+            
+            //비영속상태
+            Member member = new Member();
+            member.setId(100L);
+            member.setName("HelloJPA");
+            
+            //여기부터 영속상태
+            em.persist(member); //entityManager 안에있는 영속성 컨텍스트에서 관리를 받기 시작한다는 것.
+            // 사실은 이때 db에 저장되지 않는다. -> 커밋때 쿼리문이 날아간다.
+            
+            em.detach(member); //영속성 컨턱스트에서 분리, 준영속 상태
+            em.remove(member); //실제 디비 삭제를 요청하는 상태
 
-            tx.commit();
+            tx.commit(); // 커밋 시점에 영속성 컨텍스트에 있는애가 디비로 쿼리가 날라간다.
+
+            //어플리케이션이랑 데이터베이스 사이에 중간계층이 있는 것이다. 영속성 컨텍스트라는..
+            // 이걸 사용하면 얻는 이점은 다음 시간에 고고
         }catch(Exception e){
             tx.rollback();
         }finally{
