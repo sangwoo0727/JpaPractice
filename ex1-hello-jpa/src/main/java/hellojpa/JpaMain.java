@@ -27,6 +27,11 @@ public class JpaMain {
             // 데이터베이스에 접근하는 쿼리문(select)가 나가게 되고,
             // 두번째 find에서는 1차 캐시에 저장된 상태이므로 쿼리문이 안날라간다.
             // 즉, 1번만 쿼리문이 수행됨.
+            System.out.println(findMember1 == findMember2);
+            // 영속 엔티티의 동일성이 보장된다 . 결과값 true
+            // 마치 자바 컬렉션에서 꺼내서 하듯이
+            // 1차 캐시가 있기 때문에 가능하다.
+
             tx.commit();
         }catch(Exception e){
             tx.rollback();
