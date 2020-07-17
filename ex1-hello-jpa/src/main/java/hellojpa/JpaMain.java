@@ -24,20 +24,20 @@ public class JpaMain {
             
             //비영속상태
             Member member = new Member();
-            member.setId(100L);
+            member.setId(101L);
             member.setName("HelloJPA");
-            
-            //여기부터 영속상태
-            em.persist(member); //entityManager 안에있는 영속성 컨텍스트에서 관리를 받기 시작한다는 것.
-            // 사실은 이때 db에 저장되지 않는다. -> 커밋때 쿼리문이 날아간다.
-            
-            em.detach(member); //영속성 컨턱스트에서 분리, 준영속 상태
-            em.remove(member); //실제 디비 삭제를 요청하는 상태
 
-            tx.commit(); // 커밋 시점에 영속성 컨텍스트에 있는애가 디비로 쿼리가 날라간다.
+            System.out.println("==Before==");
+            em.persist(member); //영속성 컨텍스트에 저장
+            System.out.println("==After==");
 
-            //어플리케이션이랑 데이터베이스 사이에 중간계층이 있는 것이다. 영속성 컨텍스트라는..
-            // 이걸 사용하면 얻는 이점은 다음 시간에 고고
+            Member findMember = em.find(Member.class, 101L); //출력문을 보면, select 쿼리가 안나간다.
+            System.out.println("findMember.id " + findMember.getId());
+            System.out.println("findMember.name" + findMember.getName());
+            // 조회를 했는데, select 쿼리가 안날라간 것은
+            // 영속성 컨텍스트에 저장을 하면서, 1차 캐시에 저장이 되므로.. 똑같은 pk로 값을 가져오면 1차캐시를 먼저 조회한 것.
+
+            tx.commit();
         }catch(Exception e){
             tx.rollback();
         }finally{
