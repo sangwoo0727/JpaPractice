@@ -20,14 +20,11 @@ public class JpaMain {
 
         tx.begin();
         try{
-            Member member = em.find(Member.class,150L);
-            member.setName("AAA");
-            //원래대로면, member는 영속성 컨텍스트에 올라간 상태이고, commit 시점에 더티 체킹을 통하여, 차이가 있으면, update 쿼리를 날린다.
-
-            em.detach(member);
-            //하지만 이렇게 준영속상태로 만들어버리면, 더 이상 영속성 컨텍스트에서 관리를 안하게 된다.
-            //그러면 commit 시점에 update 쿼리 나가지 않는다.
-
+            Member member = new Member();
+            member.setId(1L);
+            member.setUsername("A");
+            member.setRoleType(RoleType.USER);
+            em.persist(member);
             tx.commit();
         }catch(Exception e){
             tx.rollback();

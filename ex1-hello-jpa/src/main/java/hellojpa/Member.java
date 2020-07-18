@@ -1,9 +1,9 @@
 package hellojpa;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 //@Table(name = "Member") //이런 경우는 생략 가능
@@ -12,16 +12,36 @@ public class Member {
     @Id
     private Long id;
 
-    //@Column(name = "name") //이렇게 같은 경우엔 생략해도된다. 서로 매핑정보가 다를때 기입하자.
-    private String name;
+    @Column(name = "name", nullable = false)
+    private String username;
 
+    private Integer age;
 
-    public Member(){
-        //JPA는 기본생성자가 하나 있어야한다.
-    }
-    public Member(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    @Enumerated(EnumType.STRING)
+    private RoleType roleType;
+    //EnumType.ORDINAL로 하게되면 enum의 순서를 데이터베이스에 저장하게 되고, 사용하지 않는다.
+    //순서를 디비에 넣을때 원래 USER,ADMIN이 enum타입에 있었을 때,
+    //첫번째 데이터는 RoleType이 0, 두번째 데이터는 1로 들어간다고 해보자. 즉 첫번째 데이터는 USER, 두번째 데이터는 ADMIN
+    //근데 여기서 enum 타입이 GUEST,USER,ADMIN으로 바뀌고,
+    //세번째 데이터는 GUEST라 0이 들어갈때, 디비값이 서로 다 본래 취지랑 맞지 않게된다.
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastModifiedDate;
+
+    //@Temporal은 자바8부터 안써도된다.
+    private LocalDate testLocalDate;
+    private LocalDateTime testLocalDateTime;
+
+    @Lob
+    private String description;
+
+    @Transient
+    private int temp; //데이터베이스 테이블에 매핑시키지 않는다. @Transient는
+    
+    public Member() {
     }
 
     public Long getId() {
@@ -32,11 +52,59 @@ public class Member {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public RoleType getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(RoleType roleType) {
+        this.roleType = roleType;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getTemp() {
+        return temp;
+    }
+
+    public void setTemp(int temp) {
+        this.temp = temp;
     }
 }
