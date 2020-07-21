@@ -22,7 +22,12 @@ public class JpaMain {
         try{
             Member member = new Member();
             member.setUsername("C");
+            System.out.println("===========================");
             em.persist(member);
+            //Identity 전략에 의해서 이시점에 insert 쿼리가 날아간다.
+            //id값이 db에 세팅이 된다.
+            System.out.println(member.getId());
+            System.out.println("===========================");
             tx.commit();
         }catch(Exception e){
             tx.rollback();
