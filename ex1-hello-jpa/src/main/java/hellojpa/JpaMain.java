@@ -20,14 +20,20 @@ public class JpaMain {
 
         tx.begin();
         try{
+            //객체를 테이블에 맞추어 모델링하는 경우
+            Team team = new Team();
+            team.setName("TeamA");
+            em.persist(team);
             Member member = new Member();
-            member.setUsername("C");
-            System.out.println("===========================");
+            member.setName("member1");
+            member.setTeamId(team.getId());
             em.persist(member);
-            //Identity 전략에 의해서 이시점에 insert 쿼리가 날아간다.
-            //id값이 db에 세팅이 된다.
-            System.out.println(member.getId());
-            System.out.println("===========================");
+
+            Member findMember = em.find(Member.class, member.getId());
+            Long findTeamId = findMember.getTeamId();
+            Team findTeam = em.find(Team.class, findTeamId);
+            //팀 정보를 불러오기까지 매우매우 복잡하고 번거롭다.
+
             tx.commit();
         }catch(Exception e){
             tx.rollback();
