@@ -1,4 +1,4 @@
 package jpabook.jpashop.domain;
 
-public class Member {
+public class OderItem {
 }
